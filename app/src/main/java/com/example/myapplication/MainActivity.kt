@@ -2,17 +2,13 @@ package com.example.myapplication
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import com.google.gson.Gson
 import dagger.hilt.android.AndroidEntryPoint
-import dagger.hilt.android.scopes.ActivityScoped
-import dagger.hilt.android.scopes.FragmentScoped
 import javax.inject.Inject
-import javax.inject.Singleton
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
-    //field injection
     @Inject
     lateinit var someClass: SomeClass
 
@@ -21,39 +17,30 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         println(someClass.doAThing())
-
     }
 }
 
-class MyFragment: Fragment(){
-
-    @Inject
-    lateinit var someClass: SomeClass
-}
-
-
-//
-//@FragmentScoped -> Jika Menggunakan ini akan error di class MainActivity karena Acivity tidak bisa Menginject Fragment , tp sebalikanya Fragment bisa menginject Activity, seperti pada class MyFragment
-//https://developer.android.com/training/dependency-injection/hilt-android#component-scopes
-
-@ActivityScoped
 class SomeClass
 @Inject
 constructor(
+    private val someInterfaceImpl: SomeInterfaceImpl
+    //private val gson: Gson
 ){
-
-
     fun doAThing(): String{
-        return "Look I did a thing"
+        return "Look I got: ${someInterfaceImpl.getAthing()}"
     }
-
 }
 
-class SomeOtherClass
+class SomeInterfaceImpl
 @Inject
-constructor(){
+constructor() : SomeInterface{
 
-    fun doSOmeOtherThing(): String{
-        return "Look I did some other thing!"
+    override fun getAthing(): String {
+        return "A Thing"
     }
+}
+
+interface SomeInterface{
+
+    fun getAthing(): String
 }
